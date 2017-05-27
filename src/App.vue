@@ -5,8 +5,20 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+
 export default {
-  name: 'app'
+  name: 'app',
+
+  created () {
+    this.SET_FAVORITES()
+  },
+
+  methods: {
+    ...mapMutations('giphy', [
+      'SET_FAVORITES'
+    ])
+  }
 }
 </script>
 

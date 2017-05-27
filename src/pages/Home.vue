@@ -4,6 +4,7 @@
     class="home">
     <search
       v-model="searchTerm"
+      :searchTerm="searchTerm"
       @onSearch="onSearch">
     </search>
   </div>

@@ -82,7 +82,6 @@ export default {
   transition: border-color $transition;
 
   &.active {
-    // border-color: palette(green);
   }
 
   &__input {
@@ -102,14 +101,14 @@ export default {
     cursor: pointer;
     flex: 1;
     background: {
-      color: palette(green);
+      color: palette(purple);
       image: url("../assets/search.svg");
       size: 2rem;
       position: center;
       repeat: no-repeat;
     }
     border: {
-      color: palette(green);
+      color: palette(purple);
       radius: $border-radius;
       style: solid;
       width: 1px;
@@ -117,7 +116,7 @@ export default {
     transition: border-color $transition;
 
     &:hover {
-      border-color: palette(green, dark);
+      border-color: palette(purple, dark);
     }
 
     &:active {
