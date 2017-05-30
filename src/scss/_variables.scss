@@ -1,9 +1,18 @@
 // Colors
+$purple: #FF26FF;
+$blue: #60B9FF;
 $green: #00b27f;
-$purple: #6A539B;
+$red: #FA5744;
 $palettes: (
     black: (
-    	base: #000000
+    	base: #333333
+    ),
+
+    blue: (
+        base: $blue,
+        dark: darken($blue, 10),
+        light: lighten($blue, 35),
+        x-dark: darken($blue, 20)
     ),
 
     gray: (
@@ -14,19 +23,22 @@ $palettes: (
     ),
 
     green: (
-    	base: $purple,
-        dark: darken($purple, 10),
-        light: lighten($purple, 35)
+        base: $green,
+        dark: darken($green, 10),
+        x-dark: darken($green, 20)
     ),
 
     purple: (
         base: $purple,
         dark: darken($purple, 10),
-        light: lighten($purple, 35)
+        light: lighten($purple, 35),
+        x-dark: darken($purple, 20)
     ),
 
 	red: (
-		base: #FA5744
+        base: $red,
+        dark: darken($red, 10),
+        x-dark: darken($red, 20)
 	),
 
     white: (
@@ -45,5 +57,5 @@ $sans-serif: 'Avenir', 'Lato', sans-serif;
 
 // Misc
 $border-radius: 3px;
-$box-shadow: 0 3px 6px rgba(0,0,0,0.07);
+$box-shadow: 0 2px 3px rgba(0,0,0,0.04);
 $transition: .25s ease-in-out;

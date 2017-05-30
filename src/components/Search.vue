@@ -4,23 +4,17 @@
     class="search"
     :class="{active: isActive}"
     @click="onClick">
-    <input 
+    <input
       :value="searchTerm"
       @input="onInput($event.target.value)"
       @keyup.enter="onSearch"
       @focus="isActive = true"
       @blur="isActive = false"
-      v-focus
-      placeholder="Search all the gifs"
+      placeholder="Search for sushi, soccer, spaceships, etc."
       class="search__input"
       spellcheck="false"
       type="text"
       autofocus>
-
-    <button
-      class="search__button" 
-      @click="onSearch">
-    </button>
   </div>
 </template>
 
@@ -34,7 +28,9 @@ export default {
     isActive: true
   }),
 
-  props: ['searchTerm'],
+  props: [
+    'searchTerm'
+  ],
 
   methods: {
     ...mapMutations([
@@ -62,65 +58,45 @@ export default {
 @import '../scss/_functions.scss';
 
 .search {
-  border: {
-    color: palette(gray, light);
-    radius: $border-radius;
-    style: solid;
-    width: 1px;
+  height: 40px;
+  cursor: text;
+  background: {
+    color: palette(gray, x-light);
+    image: url("../assets/images/search.svg");
+    size: 1.65rem;
+    position: 99% center;
+    repeat: no-repeat;
   }
-  box-shadow: $box-shadow;
+  border: 0;
   display: flex;
-  flex: 1;
-  height: 2.75rem;
-  max-width: screen(small);
   padding: {
-    bottom: .25rem;
-    right: .25rem;
     left: .65rem;
-    top: .25rem;
+    right: 2.35rem;
   }
   transition: border-color $transition;
+  width: 30%;
+  border-radius: $border-radius;
+  transition: width $transition;
 
   &.active {
+    width: 100%; 
   }
 
   &__input {
+    background-color: transparent;
     border: 0;
-    flex: 9;
     font: {
+      family: $sans-serif;
       size: 1rem;
+      weight: 600;
     }
     outline: 0;
+    line-height: 1.5rem;
+    color: palette(black);  
+    width: 100%;
 
     &::placeholder {
-      color: palette(gray);  
-    }
-  }
-
-  &__button {
-    cursor: pointer;
-    flex: 1;
-    background: {
-      color: palette(purple);
-      image: url("../assets/search.svg");
-      size: 2rem;
-      position: center;
-      repeat: no-repeat;
-    }
-    border: {
-      color: palette(purple);
-      radius: $border-radius;
-      style: solid;
-      width: 1px;
-    }
-    transition: border-color $transition;
-
-    &:hover {
-      border-color: palette(purple, dark);
-    }
-
-    &:active {
-      outline: 0;
+      color: palette(gray, dark);  
     }
   }
 }

@@ -1,26 +1,19 @@
 <template>
   <div>
-    <h1>{{searchTerm}}</h1>
-    <search
-      v-model="searchTerm"
-      :searchTerm="searchTerm"
-      @onSearch="onSearch">
-    </search>
+    <navbar>
+    </navbar>
 
-    <search-result
-      v-for="searchResult in searchResults"
-      :key="searchResult.id"
-      :id="searchResult.id"
-      :src="searchResult.images.fixed_height.url"
-      @onResultSelect="onResultSelect">
-    </search-result>
+    <masonry-grid
+      :items="searchResults"
+      @onSelect="onSelect">
+    </masonry-grid>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
-import Search from '../components/Search.vue'
-import SearchResult from '../components/SearchResult.vue'
+import Navbar from '../components/Navbar.vue'
+import MasonryGrid from '../components/MasonryGrid.vue'
 
 export default {
   name: 'home',
@@ -32,8 +25,8 @@ export default {
   }),
 
   components: {
-    Search,
-    SearchResult
+    Navbar,
+    MasonryGrid
   },
 
   created () {
@@ -64,12 +57,8 @@ export default {
         .catch(err => this.error = err)
     },
 
-    onSearch () {
-      this.$router.push({ name: 'search-results', params: { searchTerm: this.searchTerm }})
-    },
-
-    onResultSelect (resultId) {
-      this.$router.push({ name: 'details', params: { searchTerm: this.searchTerm, resultId: resultId }}) 
+    onSelect (gifId) {
+      this.$router.push({ name: 'details', params: { searchTerm: this.searchTerm, gifId: gifId }}) 
     }
   },
 
@@ -80,8 +69,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-  @import '../scss/_variables.scss';
-  @import '../scss/_functions.scss';
-</style>

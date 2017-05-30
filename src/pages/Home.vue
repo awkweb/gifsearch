@@ -2,6 +2,10 @@
   <div
     id="home"
     class="home">
+    <h1 class="home__headline">
+      Gifsearch
+    </h1>
+
     <search
       v-model="searchTerm"
       :searchTerm="searchTerm"
@@ -35,7 +39,7 @@ export default {
 
   head: {
     title: {
-      inner: 'Search all the gifs'
+      inner: 'Search GIFs'
     }
   }
 }
@@ -46,20 +50,29 @@ export default {
 @import '../scss/_functions.scss';
 
 .home {
+  align-items: center;
   display: flex;
+  flex-direction: column;
   height: 100vh;
-  justify-content: center;
   margin: {
     top: 0;
     right: auto;
     bottom: 0;
     left: auto;
   }
-  max-width: screen(medium);
+  max-width: screen(small);
   padding: 1rem;
 
+  &__headline {
+    color: palette(purple);
+    font: {
+      size: 5rem;
+      weight: 900;
+    }
+    text-shadow: -3px 3px #FDD9FF;
+  }
+
   .search {
-    margin-top: 9rem;
   }
 }
 </style>

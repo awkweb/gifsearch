@@ -4,31 +4,22 @@ import ls from 'local-storage'
 
 import api from '../../api'
 import {
-	SET_SEARCH_RESULTS, SET_ACTIVE_RESULT_INDEX, SET_ACTIVE_RESULT,
+	SET_SEARCH_RESULTS, SET_ACTIVE_GIF, SET_ACTIVE_GIF_INDEX,
 	SET_FAVORITES, ADD_FAVORITE, REMOVE_FAVORITE
 } from '../constants'
 
 const state = {
 	searchResults: [],
-	activeResultIndex: null,
-	activeResult: null,
-	favorites: {}
+	favorites: [],
+	favoritesLookup: {},
+	activeGif: null,
+	activeGifIndex: 0
 }
 
 const actions = {
   SEARCH: ({ state, commit, rootState }, searchTerm) => {
     return api.search(searchTerm)
     	.then(res => commit(SET_SEARCH_RESULTS, res.data.data))
-  },
-  FETCH_FAVORITES: ({ state, commit, rootState }) => {
-  	const favoriteIds = Object.keys(state.favorites)
-  	const promises = favoriteIds.map(favoriteId => api.getGifById(favoriteId))
-    return axios.all(promises)
-    	.then(res => {
-    		const favorites = res.map(r => r.data.data)
-    		console.log(favorites)
-    		commit(SET_FAVORITES, favorites)
-    	})
   }
 }
 
@@ -36,26 +27,36 @@ const mutations = {
 	[SET_SEARCH_RESULTS] (state, searchResults) {
 		state.searchResults = searchResults
 	},
-	[SET_ACTIVE_RESULT] (state, activeResultId) {
-		const activeResult = state.searchResults.find(searchResult => searchResult.id === activeResultId)
-		state.activeResult = activeResult
+
+	[SET_ACTIVE_GIF] (state, activeGif) {
+		state.activeGif = activeGif
 	},
-	[SET_ACTIVE_RESULT_INDEX] (state, activeResultId) {
-		const activeResultIndex = state.searchResults.findIndex(searchResult => searchResult.id === activeResultId)
-		state.activeResultIndex = activeResultIndex
+
+	[SET_ACTIVE_GIF_INDEX] (state, activeGifIndex) {
+		state.activeGifIndex = activeGifIndex
 	},
-	[SET_FAVORITES] (state, favorites) {
-		if (!favorites)
-			favorites = ls.get('favorites') || {}
+
+	[SET_FAVORITES] (state) {
+		const favoritesLookup = ls.get('favoritesLookup') || {}
+		let favorites = []
+		Object.keys(favoritesLookup).forEach(key => {
+			const favorite = favoritesLookup[key]
+			favorites.push(favorite)
+		})
 		state.favorites = favorites
+		state.favoritesLookup = favoritesLookup
 	},
-	[ADD_FAVORITE] (state, favoriteId) {
-		Vue.set(state.favorites, favoriteId, 1)
-  	ls.set('favorites', state.favorites)
+
+	[ADD_FAVORITE] (state, favorite) {
+		state.favorites.push(favorite)
+		Vue.set(state.favoritesLookup, favorite.id, favorite)
+  	ls.set('favoritesLookup', state.favoritesLookup)
 	},
+
 	[REMOVE_FAVORITE] (state, favoriteId) {
-		Vue.delete(state.favorites, favoriteId)
-  	ls.set('favorites', state.favorites)
+		state.favorites = state.favorites.filter(favorite => favorite.id === favoriteId)
+		Vue.delete(state.favoritesLookup, favoriteId)
+  	ls.set('favoritesLookup', state.favoritesLookup)
 	}
 }
 
@@ -63,14 +64,21 @@ const getters = {
   searchResults: state => {
     return state.searchResults
   },
-  activeResult: state => {
-    return state.activeResult
-  },
-  activeResultIndex: state => {
-    return state.activeResultIndex
-  },
+
   favorites: state => {
     return state.favorites
+  },
+
+  favoritesLookup: state => {
+    return state.favoritesLookup
+  },
+
+  activeGif: state => {
+    return state.activeGif
+  },
+
+  activeGifIndex: state => {
+    return state.activeGifIndex
   }
 }
 

@@ -23,18 +23,21 @@ export default {
 </script>
 
 <style lang="scss">
+@import './scss/_variables.scss';
+@import './scss/_functions.scss';
+
 body {
   margin: 0;
 }
 
 #app {
   font: {
-    family: 'Avenir', Helvetica, Arial, sans-serif;
+    family: $sans-serif;
     size: 20px;
   }
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+  color: palette(black);
+  min-height: 100vh;
 }
 </style>
