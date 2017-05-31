@@ -105,6 +105,7 @@ export default {
   }
   background-color: palette(white);
   position: fixed;
+  top: 0;
   width: 100vw;
 
   &__container {
@@ -157,7 +158,7 @@ export default {
     text-decoration: none;
     transition: color $transition;
 
-    @media screen and (max-width: screen(small)) {
+    @media screen and (max-width: screen(medium)) {
       &.favorites {
         span {
           display: none;
@@ -190,7 +191,7 @@ export default {
   .search-toggle {
     display: none;
 
-    @media screen and (max-width: screen(small)) {
+    @media screen and (max-width: screen(medium)) {
       cursor: pointer;
       outline: 0;
       display: block;
@@ -234,11 +235,18 @@ export default {
   }
 
   .search {
+    height: 40px;
     margin-right: 1rem;
+    width: 355px;
+    transition: width $transition;
 
-    @media screen and (max-width: screen(small)) {
+    @media screen and (max-width: screen(large)) {
       width: 100%;
       margin-right: .5rem;
+    }
+
+    &.active {
+      width: 100%; 
     }
   }
 }

@@ -54,7 +54,7 @@ const mutations = {
 	},
 
 	[REMOVE_FAVORITE] (state, favoriteId) {
-		state.favorites = state.favorites.filter(favorite => favorite.id === favoriteId)
+		state.favorites = state.favorites.filter(favorite => favorite.id !== favoriteId)
 		Vue.delete(state.favoritesLookup, favoriteId)
   	ls.set('favoritesLookup', state.favoritesLookup)
 	}

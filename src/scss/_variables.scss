@@ -42,14 +42,17 @@ $palettes: (
 	),
 
     white: (
-        base: #ffffff
+        base: #ffffff,
+        dark: #F9F9F9
     )
 );
 
 // Screen Sizes
 $screens: (
-    small: 544px,    
-    medium: 775px
+    small: 320px,    
+    medium: 544px,
+    large: 775px,
+    x-large: 1280px
 );
 
 // Type
@@ -57,5 +60,4 @@ $sans-serif: 'Avenir', 'Lato', sans-serif;
 
 // Misc
 $border-radius: 3px;
-$box-shadow: 0 2px 3px rgba(0,0,0,0.04);
 $transition: .25s ease-in-out;

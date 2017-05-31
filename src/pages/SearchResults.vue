@@ -1,9 +1,12 @@
 <template>
   <div>
-    <navbar>
-    </navbar>
+    <navbar></navbar>
 
+    <spinner v-if="loading"></spinner>
     <masonry-grid
+      v-else
+      :error="error"
+      :searchTerm="searchTerm"
       :items="searchResults"
       @onSelect="onSelect">
     </masonry-grid>
@@ -13,6 +16,7 @@
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import Navbar from '../components/Navbar.vue'
+import Spinner from '../components/Spinner.vue'
 import MasonryGrid from '../components/MasonryGrid.vue'
 
 export default {
@@ -20,12 +24,13 @@ export default {
 
   data: () => ({
     searchTerm: '',
-    loading: false,
-    error: null
+    loading: false
   }),
 
   components: {
     Navbar,
+    Spinner,
+    Error,
     MasonryGrid
   },
 
@@ -54,7 +59,10 @@ export default {
       this.searchTerm = this.$route.params.searchTerm
       this.SEARCH(this.searchTerm)
         .then(() => this.loading = false)
-        .catch(err => this.error = err)
+        .catch(err => {
+          this.error = err
+          this.loading = false
+        })
     },
 
     onSelect (gifId) {

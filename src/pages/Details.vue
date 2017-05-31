@@ -5,55 +5,71 @@
     <navbar>
     </navbar>
 
-    <div class="details__container" v-if="activeGif">
-      <div
-        @mouseenter="showNavigationButtons = true"
-        @mouseleave="showNavigationButtons = false"
-        class="details__image">
+    <spinner v-if="loading"></spinner>
+    <article
+      v-if="!loading && activeGif"
+      class="details__container">
+      <header class="details__header">
+        <div>
+          <img
+            v-if="activeGif.user"
+            :src="activeGif.user.avatar_url">
+          <div class="user-info">
+            <a
+              v-if="activeGif.user"
+              :href="activeGif.user.profile_url"
+              class="username">
+              {{ activeGif.user.username }}
+            </a>
+            <span
+              v-else
+              class="username">
+              Posted by Unknown
+            </span>
+
+            <span class="posted-time">{{ activeGif.import_datetime | prettyDate }}</span>
+          </div>
+        </div>
+
+        <div class="header-buttons">
+          <button class="header-button previous" @click="getPreviousGif"></button>
+          <button class="header-button next" @click="getNextGif"></button>
+        </div>
+      </header>
+
+      <div class="details__image">
         <img
           :src="activeGif.images.original.url"
           @dblclick="onFavorite">
-
-        <template v-if="showNavigationButtons">
-          <button
-            v-show="activeGifIndex > 0"
-            @click="getPreviousGif"
-            class="details__image__button previous">
-          </button>
-
-          <button
-            v-show="activeGifIndex < searchResults.length - 1"
-            @click="getNextGif"
-            class="details__image__button next">
-          </button>
-        </template>
       </div>
-      
-      <div class="details__info">
-        <div class="details__info__header">
-          <div class="details__info__header__buttons">
+      <div class="details__body">
+        <div class="details__body__toolbar">
+          <div>
             <button
               @click="onFavorite"
-              class="details__info__header__button"
-              :class="isFavorited ? 'hearted' : 'heart'">
+              :class="activeGif.id in favoritesLookup ? 'hearted' : 'heart'"
+              class="button">
+            </button>
+
+            <button
+              class="button share">
             </button>
           </div>
-          
-          <span>Posted {{ activeGif.import_datetime | prettyDate }}</span>
+          <div class="tags">
+            <span v-for="tag in tags" class="tag">{{ tag }}</span>
+          </div>
         </div>
 
-        <span>Source {{ activeGif.source_tld }}</span>
-        <span>Rating {{ activeGif.rating }}</span>
-        <span>Embed {{ activeGif.embed_url }}</span>
+        <!-- {{ activeGif }} -->
       </div>
-    </div>
+    </article>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import Navbar from '../components/Navbar.vue'
-import keyboard from 'keyboardjs'
+import Spinner from '../components/Spinner.vue'
 
 export default {
   name: 'details',
@@ -62,20 +78,16 @@ export default {
     loading: false,
     error: null,
     searchTerm: '',
-    gifId: '',
-    showNavigationButtons: false
+    gifId: ''
   }),
 
   components: {
-    Navbar
+    Navbar,
+    Spinner
   },
 
   created () {
     this.getDetails()
-  },
-
-  beforeDestroy () {
-    keyboard.reset()
   },
 
   watch: {
@@ -88,11 +100,20 @@ export default {
       'favorites',
       'favoritesLookup',
       'activeGif',
-      'activeGifIndex'
+      'activeGifIndex',
     ]),
 
     isFavorited () {
       return this.activeGif.id in this.favoritesLookup
+    },
+
+    tags () {
+      let tags = this.activeGif.slug.split('-')
+      tags.pop()
+      tags.push(this.activeGif.rating.toUpperCase())
+      if (this.activeGif.source_tld.length > 0)
+        tags.push(this.activeGif.source_tld)
+      return tags
     }
   },
 
@@ -108,17 +129,12 @@ export default {
       'REMOVE_FAVORITE'
     ]),
 
-    setUpHotKeys () {
-      keyboard.bind('right', () => this.getNextGif())
-      keyboard.bind('left', () => this.getPreviousGif())
-      keyboard.bind('esc', () => this.onBack())
-    },
-
     getDetails () {
       this.searchTerm = this.$route.params.searchTerm
       this.gifId = this.$route.params.gifId
       const isFavoriteDetails = this.searchTerm === 'favorites'
       if (!isFavoriteDetails && this.searchResults.length == 0) {
+        this.loading = true
         this.SEARCH(this.searchTerm)
           .then(() => {
             this.getResult(this.gifId, false)
@@ -128,7 +144,6 @@ export default {
       } else {
         this.getResult(this.gifId, isFavoriteDetails)
       }
-      this.setUpHotKeys()
     },
 
     getResult (gifId, isFavoriteDetails) {
@@ -148,24 +163,18 @@ export default {
 
     getNextGif () {
       const gifs = this.searchTerm === 'favorites' ? this.favorites : this.searchResults
-      if (this.activeGifIndex < gifs.length - 1) {
-        const nextIndex = this.activeGifIndex + 1
-        const nextGif = gifs[nextIndex]
-        
-        this.SET_ACTIVE_GIF_INDEX(nextIndex)
-        this.SET_ACTIVE_GIF(nextGif)
-      }      
+      const nextIndex = this.activeGifIndex < gifs.length - 1 ? this.activeGifIndex + 1 : 0
+      const nextGif = gifs[nextIndex]
+      this.SET_ACTIVE_GIF_INDEX(nextIndex)
+      this.$router.push({ name: 'details', params: { searchTerm: this.searchTerm, gifId: nextGif.id }}) 
     },
 
     getPreviousGif () {
       const gifs = this.searchTerm === 'favorites' ? this.favorites : this.searchResults
-      if (this.activeGifIndex > 0) {
-        const previousIndex = this.activeGifIndex - 1
-        const previousGif = gifs[previousIndex]
-        
-        this.SET_ACTIVE_GIF_INDEX(previousIndex)
-        this.SET_ACTIVE_GIF(previousGif)
-      }
+      const previousIndex = this.activeGifIndex > 0 ? this.activeGifIndex - 1 : gifs.length - 1
+      const previousGif = gifs[previousIndex]
+      this.SET_ACTIVE_GIF_INDEX(previousIndex)
+      this.$router.push({ name: 'details', params: { searchTerm: this.searchTerm, gifId: previousGif.id }})
     },
 
     onBack () {
@@ -178,7 +187,7 @@ export default {
 
   head: {
     title: {
-      inner: this.activeGif ? this.activeGif.id : ''
+      inner: 'GIF Details'
     }
   }
 }
@@ -189,135 +198,215 @@ export default {
 @import '../scss/_functions.scss';
 
 .details {
-  min-height: 100vh;
+  min-height: calc(100vh - 4.75rem);
+  background-color: palette(white, dark);
+  padding: {
+    top: 4.75rem;
+  }
+  display: flex;
+  justify-content: center;
 
   &__container {
+    background-color: palette(white);
     display: flex;
-
-    padding: {
-      top: 4.5rem;
+    flex-direction: column;
+    border: {
+      width: 1px;
+      style: solid;
+      color: #e6e6e6;
+      top-right-radius: $border-radius;
+      top-left-radius: $border-radius;
+    }
+    width: screen(medium);
+    max-width: 100%;
+    height: 90%;
+    margin: {
       right: .5rem;
       left: .5rem;
+      bottom: 2rem;
     }
-
-    @media screen and (max-width: screen(medium)) {
-      flex-direction: column;
-    }
-  }
-
-  &__image, &__info {
-    flex: 1;    
   }
 
   &__image {
-    position: relative;
     img {
       width: 100%;
       height: auto;
     }
 
-    &__button {
+    @media screen and (max-width: screen(small)) {
+      max-width: 100%;
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: {
+      left: 1rem;
+      right: 1rem;
+      top: 1rem;
+      bottom: .75rem;
+    }
+    border-bottom: {
+      width: 1px;
+      style: solid;
+      color: #e6e6e6;
+      radius: $border-radius;
+    }
+
+    div {
+      display: flex;
+      align-items: center;
+    }
+
+    img {
+      height: 30px;
+      width: 30px;
+      margin-right: .5rem;
+      border-radius: 50%;
+      margin-right: .75rem;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: flex-start;
+      flex-direction: column;
+      line-height: 1.2;
+      font: {
+        family: $sans-serif;
+        size: .95rem;
+      }
+    }
+
+    .username {
+      color: palette(black);
+      text-transform: capitalize;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .posted-time {
+      font-weight: 500;
+    }
+
+    .header-buttons {
+      border: {
+        width: 1px;
+        style: solid;
+        color: #e6e6e6;
+        radius: $border-radius;
+      }
+    }
+
+    .header-button {
       outline: 0;
+      height: 30px;
+      width: 30px;
       cursor: pointer;
-      position: absolute;
-      top: 40%;
-      width: 4rem;
-      height: 4rem;
+      border: 0;
+      padding: 0;
       background: {
-        color: palette(purple);
-        size: 4rem;
+        color: transparent;
+        size: 2.5rem;
         position: center;
         repeat: no-repeat;
       }
-      border: {
-        style: solid;
-        width: 1px;
-        color: palette(purple, dark);
-      }
-      transition: border-color $transition;
-
-      &:hover {
-        border-color: palette(purple, x-dark);
-      }
 
       &.previous {
-        left: 0;
         background-image: url("../assets/images/chevron-left.svg");
       }
+
       &.next {
-        right: 0;
         background-image: url("../assets/images/chevron-right.svg");
       }
     }
   }
 
-  &__info {
-    padding-left: 1rem;
-    @media screen and (max-width: screen(medium)) {
-      padding: 0;
+  &__body {
+    padding: {
+      left: 1rem;
+      right: 1rem;
+      top: .5rem;
+      bottom: .5rem;
     }
 
-    &__header {
+    &__toolbar {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
+      align-items: flex-end;
+      padding-bottom: .5rem;
+      margin-bottom: .5rem;
       border-bottom: {
-        style: solid;
         width: 1px;
-        color: palette(gray, light);
+        style: solid;
+        color: #e6e6e6;
       }
 
-      &__buttons {
-        display: flex;
+      .tags {
+        height: 30px;
+        max-width: 80%;
+        overflow-x: auto;
+        
+        @media screen and (max-width: screen(medium)) {
+          max-width: 70%;
+        }
       }
 
-      &__button, span {
+      .tag {
+        padding: {
+          left: .5rem;
+          right: .5rem;
+          top: .25rem;
+          bottom: .25rem;
+        }
+        border: {
+          width: 1px;
+          style: solid;
+          color: #e6e6e6;
+          radius: $border-radius;
+        }
         font: {
-          size: 1rem;
           family: $sans-serif;
+          size: .9rem;
+          weight: 700;
+        }
+        margin-right: .25rem;
+        
+        &:last-child {
+          margin-right: 0;
         }
       }
+    }
+  }
 
-      &__button {
-        cursor: pointer;
-        border: 0;
-        padding: 0;
-        background-color: transparent;
-      }
+  .button {
+    width: 32px;
+    height: 28px;
+    border: 0;
+    cursor: pointer;
+    background: {
+      color: palette(white);
+      position: center 1%;
+      size: 35px;
+      repeat: no-repeat;
+    }
+    transition: color $transition, background-color $transition;
+    
+    &.heart {
+      background-image: url("../assets/images/heart-black.svg");
+    }
 
-      &__button {
-        height: 35px;
-        width: 35px;
-        background: {
-          color: transparent;
-          size: cover;
-          repeat: no-repeat;
-        }
-        border: 0;
-        cursor: pointer;
-        transition: background-image $transition;
+    &.hearted {
+      background-image: url("../assets/images/heart.svg");
+    }
 
-        &.share {
-          background-image: url("../assets/images/share.svg");
-        }
+    &.share {
+      background-image: url("../assets/images/share.svg");
+    }
 
-        &.heart {
-          background-image: url("../assets/images/heart.svg");
-        }
-
-        &.hearted {
-          background-image: url("../assets/images/hearted.svg");
-        }
-
-        &:focus {
-          outline: 0;
-        }
-      }
-
-      span {
-        color: palette(black);
-      }
+    &:focus {
+      outline: 0;
     }
   }
 }

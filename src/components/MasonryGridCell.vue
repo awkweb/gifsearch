@@ -15,8 +15,7 @@
     <img 
       v-if="currentSrc == null"
       :src="smallSrc"
-      @click="onSelect"
-      class="blur">
+      @click="onSelect">
     
     <img
       :src="src"
@@ -97,10 +96,6 @@ export default {
     cursor: pointer;
     width: 100%;
     height: auto;
-  }
-
-  .blur {
-    filter: blur(5px);
   }
 
   &__favorite {

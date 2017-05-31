@@ -58,7 +58,6 @@ export default {
 @import '../scss/_functions.scss';
 
 .search {
-  height: 40px;
   cursor: text;
   background: {
     color: palette(gray, x-light);
@@ -69,18 +68,7 @@ export default {
   }
   border: 0;
   display: flex;
-  padding: {
-    left: .65rem;
-    right: 2.35rem;
-  }
-  transition: border-color $transition;
-  width: 30%;
   border-radius: $border-radius;
-  transition: width $transition;
-
-  &.active {
-    width: 100%; 
-  }
 
   &__input {
     background-color: transparent;
@@ -89,6 +77,10 @@ export default {
       family: $sans-serif;
       size: 1rem;
       weight: 600;
+    }
+    padding: {
+      left: .65rem;
+      right: 2.35rem;
     }
     outline: 0;
     line-height: 1.5rem;
