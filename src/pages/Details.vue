@@ -6,6 +6,15 @@
     </navbar>
 
     <spinner v-if="loading"></spinner>
+    
+    <div
+      v-if="!loading && activeGif"
+      class="details__nav">
+      <router-link :to="{ name: 'search-results', params: { searchTerm: searchTerm }}">Back to {{ searchTerm != 'favorites' ? 'Results' : 'Favorites' }}</router-link>
+
+      <span @click="onRandomGif">Random GIF</span>
+    </div>
+    
     <article
       v-if="!loading && activeGif"
       class="details__container">
@@ -52,7 +61,8 @@
             </button>
 
             <button
-              class="button share">
+              @click="onExternalLink"
+              class="button external-link">
             </button>
           </div>
           <div class="tags">
@@ -60,7 +70,41 @@
           </div>
         </div>
 
-        <!-- {{ activeGif }} -->
+        <div class="field-container">
+          <h2>Links</h2>
+          <field
+            :label="'Giphy'"
+            :helpText="'Link to the GIF image on Giphy'"
+            :url="activeGif.url"
+            :buttonText="'Copy'"></field>
+
+          <field
+            :label="'Embed'"
+            :helpText="'GIF Embed Code'"
+            :url="activeGif.url"
+            :buttonText="'Copy'"></field>
+        </div>
+
+        <div class="field-container">
+          <h2>Download</h2>
+          <field
+            :label="'Original'"
+            :helpText="'Source file with no edits'"
+            :url="activeGif.images.original.url"
+            :buttonText="'Download'"></field>
+
+          <field
+            :label="'Small'"
+            :helpText="'Optimized for file size'"
+            :url="activeGif.images.original.url"
+            :buttonText="'Download'"></field>
+
+          <field
+            :label="'MP4'"
+            :helpText="'Video file'"
+            :url="activeGif.images.original_mp4.mp4"
+            :buttonText="'Download'"></field>
+        </div>
       </div>
     </article>
   </div>
@@ -70,6 +114,7 @@
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import Navbar from '../components/Navbar.vue'
 import Spinner from '../components/Spinner.vue'
+import Field from '../components/Field.vue'
 
 export default {
   name: 'details',
@@ -83,7 +128,8 @@ export default {
 
   components: {
     Navbar,
-    Spinner
+    Spinner,
+    Field
   },
 
   created () {
@@ -161,6 +207,18 @@ export default {
       }
     },
 
+    onExternalLink () {
+      window.open(this.activeGif.url)
+    },
+
+    onRandomGif () {
+      const gifs = this.searchTerm === 'favorites' ? this.favorites : this.searchResults
+      const randomIndex = Math.floor(Math.random() * gifs.length)
+      const randomGif = gifs[randomIndex]
+      this.SET_ACTIVE_GIF_INDEX(randomIndex)
+      this.$router.push({ name: 'details', params: { searchTerm: this.searchTerm, gifId: randomGif.id }})
+    },
+
     getNextGif () {
       const gifs = this.searchTerm === 'favorites' ? this.favorites : this.searchResults
       const nextIndex = this.activeGifIndex < gifs.length - 1 ? this.activeGifIndex + 1 : 0
@@ -198,13 +256,65 @@ export default {
 @import '../scss/_functions.scss';
 
 .details {
+  &__nav {
+    width: screen(medium);
+    max-width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin: {
+      top: .25rem;
+      bottom: .35rem;
+    }
+
+    a, span {
+      cursor: pointer;
+      color: palette(gray);
+      font: {
+        family: $sans-serif;
+        size: .9rem;
+        weight: 500;
+      }
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    @media screen and (max-width: screen(medium)) {
+      max-width: 95%;
+    }
+  }
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  
+  .field-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: .25rem;
+
+    h2 {
+      font-size: 1.4rem;
+      margin: {
+        top: .5rem;
+        bottom: 1rem;
+      }
+      padding-bottom: .35rem;
+      border-bottom: {
+        width: 1px;
+        style: solid;
+        color: #e6e6e6;
+      }
+    }
+  }
+
   min-height: calc(100vh - 4.75rem);
   background-color: palette(white, dark);
   padding: {
     top: 4.75rem;
   }
-  display: flex;
-  justify-content: center;
 
   &__container {
     background-color: palette(white);
@@ -220,15 +330,15 @@ export default {
     width: screen(medium);
     max-width: 100%;
     height: 90%;
-    margin: {
-      right: .5rem;
-      left: .5rem;
-      bottom: 2rem;
+    margin-bottom: 2rem;
+    @media screen and (max-width: screen(medium)) {
+      max-width: 95%;
     }
   }
 
   &__image {
     img {
+      cursor: pointer;
       width: 100%;
       height: auto;
     }
@@ -287,6 +397,7 @@ export default {
     }
 
     .posted-time {
+      text-transform: capitalize;
       font-weight: 500;
     }
 
@@ -401,8 +512,8 @@ export default {
       background-image: url("../assets/images/heart.svg");
     }
 
-    &.share {
-      background-image: url("../assets/images/share.svg");
+    &.external-link {
+      background-image: url("../assets/images/external-link.svg");
     }
 
     &:focus {
