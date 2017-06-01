@@ -13,7 +13,7 @@
           v-if="showSearch || windowWidth > 544"
           v-model="searchTerm"
           :searchTerm="searchTerm"
-          :showSearch="showSearch"
+          :focusSearch="false"
           @onSearch="onSearch">
         </search>
 

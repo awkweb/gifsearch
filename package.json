@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "axios": "^0.16.1",
+    "clipboard": "^1.7.1",
     "local-storage": "^1.4.2",
     "moment": "^2.18.1",
     "vue": "^2.3.3",

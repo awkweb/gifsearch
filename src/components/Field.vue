@@ -6,29 +6,59 @@
     </div>
     <div class="field__input__container">
       <input
-      	:value="url"
+      	:value="text"
       	@focus="selectUrl"
       	type="text"
       	readonly="true">
-      <button @click="onAction">{{ buttonText }}</button>
+      <button
+      	:data-clipboard-text="text"
+      	@click="onAction">{{ active ? activeButtonText : buttonText }}</button>
     </div>
   </div>
 </template>
 
 <script>
+import Clipboard from 'clipboard'
+
 export default {
 	name: 'field',
+
+	data: () => ({
+    active: false
+  }),
 
 	props: [
 		'label',
 		'helpText',
 		'url',
-		'buttonText'
+		'buttonText',
+		'activeButtonText',
+		'type'
 	],
+
+	computed: {
+		text () {
+			let copyText = this.url
+			if (this.type === 'embed') {
+				copyText = `<iframe src="https://giphy.com/embed/ruHx7nLAmQMbm" width="480" height="480" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="${this.url}">via GIPHY</a></p>`
+			}
+			return copyText
+		}
+	},
+
+	mounted () {
+    const button = this.$el.getElementsByTagName('button')[0]
+    const clipboard = new Clipboard(button)
+    clipboard.on('success', (e) => {
+    	this.active = true
+    	setTimeout(() => {
+    		this.active = false
+    	}, 400)
+    })
+  },
 
 	methods: {
 		onAction () {
-			this.$emit('onAction')
 		},
 
 		selectUrl () {
@@ -74,7 +104,7 @@ export default {
 	  border: {
 	    width: 1px;
 	    style: solid;
-	    color: #e6e6e6;
+	    color: palette(gray, border);
 	    radius: $border-radius;
 	  }
 	  padding: {

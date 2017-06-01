@@ -36,7 +36,7 @@ export default {
 
   methods: {
     onSelect (gifId) {
-      this.$router.push({ name: 'details', params: { searchTerm: 'favorites', gifId: gifId }}) 
+      this.$router.push({ name: 'favorite-details', params: { gifId: gifId }}) 
     }
   },
 

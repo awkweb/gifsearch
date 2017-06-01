@@ -9,6 +9,7 @@
     <search
       v-model="searchTerm"
       :searchTerm="searchTerm"
+      :focusSearch="true"
       @onSearch="onSearch">
     </search>
   </div>
@@ -32,7 +33,8 @@ export default {
   methods: {
     onSearch () {
       if (this.searchTerm.length > 0) {
-        this.$router.push({ name: 'search-results', params: { searchTerm: this.searchTerm }})
+        const searchTerm = this.searchTerm.replace(/\s/g, '+')
+        this.$router.push({ name: 'search-results', params: { searchTerm: searchTerm }})
       }
     }
   },

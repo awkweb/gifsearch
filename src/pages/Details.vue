@@ -10,7 +10,17 @@
     <div
       v-if="!loading && activeGif"
       class="details__nav">
-      <router-link :to="{ name: 'search-results', params: { searchTerm: searchTerm }}">Back to {{ searchTerm != 'favorites' ? 'Results' : 'Favorites' }}</router-link>
+
+      <router-link
+        v-if="searchTerm"
+        :to="{ name: 'search-results', params: { searchTerm: searchTerm }}">
+        Back to Results
+      </router-link>
+      <router-link
+        v-else
+        :to="{ name: 'favorites' }">
+        Back to Favorites
+      </router-link>
 
       <span @click="onRandomGif">Random GIF</span>
     </div>
@@ -20,9 +30,18 @@
       class="details__container">
       <header class="details__header">
         <div>
-          <img
-            v-if="activeGif.user"
-            :src="activeGif.user.avatar_url">
+            <a
+              v-if="activeGif.user"
+              :href="activeGif.user.profile_url"
+              class="image-link">
+            <img
+              :src="activeGif.user.avatar_url">
+            </a>
+            <div
+              v-else
+              class="image-link">
+            </div>
+
           <div class="user-info">
             <a
               v-if="activeGif.user"
@@ -51,61 +70,13 @@
           :src="activeGif.images.original.url"
           @dblclick="onFavorite">
       </div>
-      <div class="details__body">
-        <div class="details__body__toolbar">
-          <div>
-            <button
-              @click="onFavorite"
-              :class="activeGif.id in favoritesLookup ? 'hearted' : 'heart'"
-              class="button">
-            </button>
 
-            <button
-              @click="onExternalLink"
-              class="button external-link">
-            </button>
-          </div>
-          <div class="tags">
-            <span v-for="tag in tags" class="tag">{{ tag }}</span>
-          </div>
-        </div>
-
-        <div class="field-container">
-          <h2>Links</h2>
-          <field
-            :label="'Giphy'"
-            :helpText="'Link to the GIF image on Giphy'"
-            :url="activeGif.url"
-            :buttonText="'Copy'"></field>
-
-          <field
-            :label="'Embed'"
-            :helpText="'GIF Embed Code'"
-            :url="activeGif.url"
-            :buttonText="'Copy'"></field>
-        </div>
-
-        <div class="field-container">
-          <h2>Download</h2>
-          <field
-            :label="'Original'"
-            :helpText="'Source file with no edits'"
-            :url="activeGif.images.original.url"
-            :buttonText="'Download'"></field>
-
-          <field
-            :label="'Small'"
-            :helpText="'Optimized for file size'"
-            :url="activeGif.images.original.url"
-            :buttonText="'Download'"></field>
-
-          <field
-            :label="'MP4'"
-            :helpText="'Video file'"
-            :url="activeGif.images.original_mp4.mp4"
-            :buttonText="'Download'"></field>
-        </div>
-      </div>
+      <gif-details-body
+        :isFavorited="isFavorited"
+        :isFavoriteDetails="this.searchTerm == null"
+        @onSelect="onSelect"
+        @onFavorite="onFavorite">
+      </gif-details-body>
     </article>
   </div>
 </template>
@@ -114,10 +85,10 @@
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import Navbar from '../components/Navbar.vue'
 import Spinner from '../components/Spinner.vue'
-import Field from '../components/Field.vue'
+import GifDetailsBody from '../components/GifDetails/GifDetailsBody.vue'
 
 export default {
-  name: 'details',
+  name: 'gif-details',
 
   data: () => ({
     loading: false,
@@ -129,7 +100,7 @@ export default {
   components: {
     Navbar,
     Spinner,
-    Field
+    GifDetailsBody
   },
 
   created () {
@@ -178,7 +149,7 @@ export default {
     getDetails () {
       this.searchTerm = this.$route.params.searchTerm
       this.gifId = this.$route.params.gifId
-      const isFavoriteDetails = this.searchTerm === 'favorites'
+      const isFavoriteDetails = this.searchTerm == null
       if (!isFavoriteDetails && this.searchResults.length == 0) {
         this.loading = true
         this.SEARCH(this.searchTerm)
@@ -212,27 +183,42 @@ export default {
     },
 
     onRandomGif () {
-      const gifs = this.searchTerm === 'favorites' ? this.favorites : this.searchResults
+      const gifs = this.searchTerm == null ? this.favorites : this.searchResults
       const randomIndex = Math.floor(Math.random() * gifs.length)
       const randomGif = gifs[randomIndex]
       this.SET_ACTIVE_GIF_INDEX(randomIndex)
-      this.$router.push({ name: 'details', params: { searchTerm: this.searchTerm, gifId: randomGif.id }})
+      this.routeToGif(this.$route.params.searchTerm, randomGif.id)
     },
 
     getNextGif () {
-      const gifs = this.searchTerm === 'favorites' ? this.favorites : this.searchResults
+      const gifs = this.searchTerm == null ? this.favorites : this.searchResults
       const nextIndex = this.activeGifIndex < gifs.length - 1 ? this.activeGifIndex + 1 : 0
       const nextGif = gifs[nextIndex]
       this.SET_ACTIVE_GIF_INDEX(nextIndex)
-      this.$router.push({ name: 'details', params: { searchTerm: this.searchTerm, gifId: nextGif.id }}) 
+      this.routeToGif(this.$route.params.searchTerm, nextGif.id)
     },
 
     getPreviousGif () {
-      const gifs = this.searchTerm === 'favorites' ? this.favorites : this.searchResults
+      const gifs = this.searchTerm == null ? this.favorites : this.searchResults
       const previousIndex = this.activeGifIndex > 0 ? this.activeGifIndex - 1 : gifs.length - 1
       const previousGif = gifs[previousIndex]
       this.SET_ACTIVE_GIF_INDEX(previousIndex)
-      this.$router.push({ name: 'details', params: { searchTerm: this.searchTerm, gifId: previousGif.id }})
+      this.routeToGif(this.$route.params.searchTerm, previousGif.id)
+    },
+
+    onSelect (gifId) {
+      const gifs = this.searchTerm == null ? this.favorites : this.searchResults
+      const index = gifs.findIndex(gif => gif.id === gifId)
+      this.SET_ACTIVE_GIF_INDEX(index)
+      this.routeToGif(this.searchTerm, gifId)
+    },
+
+    routeToGif (searchTerm, gifId) {
+      if (searchTerm) {
+        this.$router.push({ name: 'details', params: { searchTerm: searchTerm, gifId: gifId}})
+      } else {
+        this.$router.push({ name: 'favorite-details', params: { gifId: gifId}})
+      }
     },
 
     onBack () {
@@ -289,27 +275,6 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  
-  .field-container {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: .25rem;
-
-    h2 {
-      font-size: 1.4rem;
-      margin: {
-        top: .5rem;
-        bottom: 1rem;
-      }
-      padding-bottom: .35rem;
-      border-bottom: {
-        width: 1px;
-        style: solid;
-        color: #e6e6e6;
-      }
-    }
-  }
-
   min-height: calc(100vh - 4.75rem);
   background-color: palette(white, dark);
   padding: {
@@ -370,12 +335,20 @@ export default {
       align-items: center;
     }
 
-    img {
+    .image-link {
+      align-items: center;
+      background-color: palette(gray, light);
+      border-radius: 50%;
+      display: flex;
+      margin-right: .75rem;
       height: 30px;
       width: 30px;
-      margin-right: .5rem;
+    }
+
+    img {
       border-radius: 50%;
-      margin-right: .75rem;
+      height: 100%;
+      width: 100%;
     }
 
     .user-info {
@@ -431,93 +404,6 @@ export default {
       &.next {
         background-image: url("../assets/images/chevron-right.svg");
       }
-    }
-  }
-
-  &__body {
-    padding: {
-      left: 1rem;
-      right: 1rem;
-      top: .5rem;
-      bottom: .5rem;
-    }
-
-    &__toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      padding-bottom: .5rem;
-      margin-bottom: .5rem;
-      border-bottom: {
-        width: 1px;
-        style: solid;
-        color: #e6e6e6;
-      }
-
-      .tags {
-        height: 30px;
-        max-width: 80%;
-        overflow-x: auto;
-        
-        @media screen and (max-width: screen(medium)) {
-          max-width: 70%;
-        }
-      }
-
-      .tag {
-        padding: {
-          left: .5rem;
-          right: .5rem;
-          top: .25rem;
-          bottom: .25rem;
-        }
-        border: {
-          width: 1px;
-          style: solid;
-          color: #e6e6e6;
-          radius: $border-radius;
-        }
-        font: {
-          family: $sans-serif;
-          size: .9rem;
-          weight: 700;
-        }
-        margin-right: .25rem;
-        
-        &:last-child {
-          margin-right: 0;
-        }
-      }
-    }
-  }
-
-  .button {
-    width: 32px;
-    height: 28px;
-    border: 0;
-    cursor: pointer;
-    background: {
-      color: palette(white);
-      position: center 1%;
-      size: 35px;
-      repeat: no-repeat;
-    }
-    transition: color $transition, background-color $transition;
-    
-    &.heart {
-      background-image: url("../assets/images/heart-black.svg");
-    }
-
-    &.hearted {
-      background-image: url("../assets/images/heart.svg");
-    }
-
-    &.external-link {
-      background-image: url("../assets/images/external-link.svg");
-    }
-
-    &:focus {
-      outline: 0;
     }
   }
 }

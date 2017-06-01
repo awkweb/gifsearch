@@ -2,10 +2,12 @@
   <div
     id="search"
     class="search"
+    v-click-outside="clickOutside"
     :class="{active: isActive}"
     @click="onClick">
     <input
       :value="searchTerm"
+      :autofocus="focusSearch"
       @input="onInput($event.target.value)"
       @keyup.enter="onSearch"
       @focus="isActive = true"
@@ -13,8 +15,7 @@
       placeholder="Search for sushi, soccer, spaceships, etc."
       class="search__input"
       spellcheck="false"
-      type="text"
-      autofocus>
+      type="text">
   </div>
 </template>
 
@@ -25,11 +26,12 @@ export default {
   name: 'search',
 
   data: () => ({
-    isActive: true
+    isActive: false
   }),
 
   props: [
-    'searchTerm'
+    'searchTerm',
+    'focusSearch'
   ],
 
   methods: {
@@ -48,6 +50,10 @@ export default {
 
     onSearch () {
       this.$emit('onSearch')
+    },
+
+    clickOutside () {
+      this.isActive = false
     }
   }
 }
@@ -58,6 +64,7 @@ export default {
 @import '../scss/_functions.scss';
 
 .search {
+  position: relative;
   cursor: text;
   background: {
     color: palette(gray, x-light);

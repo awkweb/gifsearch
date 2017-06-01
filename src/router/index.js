@@ -25,12 +25,17 @@ const router = new VueRouter({
 			component: Favorites
 		},
 		{
-			path: '/:searchTerm/',
+			path: '/favorites/:gifId/',
+			name: 'favorite-details',
+			component: Details
+		},
+		{
+			path: '/g/:searchTerm/',
 			name: 'search-results',
 			component: SearchResults
 		},
 		{
-			path: '/:searchTerm/:gifId/',
+			path: '/g/:searchTerm/:gifId/',
 			name: 'details',
 			component: Details
 		},
@@ -39,7 +44,14 @@ const router = new VueRouter({
 			name: 'notfound',
 			component: NotFound
 		}
-  ]
+  ],
+  scrollBehavior (to, from, savedPosition) {
+	  if (savedPosition) {
+	    return savedPosition
+	  } else {
+	    return { x: 0, y: 0 }
+	  }
+	}
 })
 
 export default router
