@@ -14,10 +14,10 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import Navbar from '../components/Navbar.vue'
 import Spinner from '../components/Spinner.vue'
-import MasonryGrid from '../components/MasonryGrid.vue'
+import MasonryGrid from '../components/MasonryGrid/MasonryGrid.vue'
 
 export default {
   name: 'home',
@@ -57,6 +57,7 @@ export default {
       this.error = null
       this.loading = true
       this.searchTerm = this.$route.params.searchTerm
+      this.$emit('updateHead')
       this.SEARCH(this.searchTerm)
         .then(() => this.loading = false)
         .catch(err => {
@@ -71,8 +72,8 @@ export default {
   },
 
   head: {
-    title: {
-      inner: 'Results'
+    title: function () {
+      return { inner: this.searchTerm }
     }
   }
 }

@@ -13,3 +13,16 @@ Vue.directive('click-outside', {
 		document.body.removeEventListener('click', el.event)
 	}
 });
+
+Vue.directive('favorite-animation', {
+	bind: function (el, binding, vnode) {
+
+	},
+	update: function (el) {
+
+	},
+	unbind: function (el) {
+		document.body.removeEventListener('mousedown', el.event);
+		document.body.removeEventListener('resize', el.event);
+	}
+});

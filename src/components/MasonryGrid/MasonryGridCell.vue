@@ -9,23 +9,32 @@
       v-if="showFavorite"
       class="masonry-grid-cell__favorite"
       :class="isFavorited ? 'hearted' : 'heart'"
-      @click="onFavorite">
+      @click="onFavorite($event)">
     </button> 
     
-    <img 
+    <div 
       v-if="currentSrc == null"
-      :src="smallSrc"
-      @click="onSelect">
-    
-    <img
-      :src="src"
-      @click="onSelect"
-      v-else>
+      class="image-container">
+      <img 
+        :src="smallSrc"
+        @click="onSelect"
+        class="blur">
+    </div>
+
+    <div 
+      v-else
+      class="image-container">
+      <img
+        :src="src"
+        @click="onSelect">
+    </div>
+
   </div>
 </template>
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
+import { animeMixin } from '../../mixins'
 
 export default {
   name: 'masonry-grid-cell',
@@ -34,6 +43,8 @@ export default {
     currentSrc: null,
     showFavorite: false,
   }),
+
+  mixins: [animeMixin],
 
   computed: {
     ...mapGetters('giphy', [
@@ -69,11 +80,12 @@ export default {
       this.$emit('onSelect', this.id)
     },
 
-    onFavorite () {
+    onFavorite (event) {
       if (this.id in this.favoritesLookup) {
         this.REMOVE_FAVORITE(this.id)
       } else {
         this.ADD_FAVORITE(this.data)
+        this.fireworks(event)
       }
     }
   }
@@ -81,21 +93,29 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../scss/_variables.scss';
-@import '../scss/_functions.scss';
+@import '../../scss/_variables.scss';
+@import '../../scss/_functions.scss';
 
 .masonry-grid-cell {
-  -webkit-column-break-inside: avoid;
-  page-break-inside: avoid;
   break-inside: avoid;
+  page-break-inside: avoid;
+  padding-bottom: .5rem;
   position: relative;
-  border-radius: $border-radius;
+
+  .image-container {
+    overflow: hidden;
+  }
+
+  .blur {
+    filter: blur(10px);
+  }
 
   img {
     border-radius: $border-radius;
     cursor: pointer;
     width: 100%;
     height: auto;
+    vertical-align: top;
   }
 
   &__favorite {
@@ -121,7 +141,7 @@ export default {
     &.heart {
       background: {
         color: palette(white);
-        image: url("../assets/images/heart.svg");
+        image: url("../../assets/icons/heart.svg");
       }
       border-color: palette(red);
     }
@@ -129,7 +149,7 @@ export default {
     &.hearted {
       background: {
         color: palette(red);
-        image: url("../assets/images/hearted.svg");
+        image: url("../../assets/icons/hearted.svg");
       }
       border-color: palette(white);
     }

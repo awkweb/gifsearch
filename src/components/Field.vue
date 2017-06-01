@@ -10,9 +10,7 @@
       	@focus="selectUrl"
       	type="text"
       	readonly="true">
-      <button
-      	:data-clipboard-text="text"
-      	@click="onAction">{{ active ? activeButtonText : buttonText }}</button>
+      <button :data-clipboard-text="text">{{ active ? activeButtonText : buttonText }}</button>
     </div>
   </div>
 </template>
@@ -58,9 +56,6 @@ export default {
   },
 
 	methods: {
-		onAction () {
-		},
-
 		selectUrl () {
 			this.$el.getElementsByTagName('input')[0].select()
     }
@@ -74,13 +69,15 @@ export default {
 
 .field {
 	display: flex;
-	flex-direction: column; 
 	flex: 1;
+	flex-direction: column;
 	margin-bottom: 10px;
 	transition: border-color $transition;
+	
 	&.active {
 	  border-color: palette(purple);
 	}
+	
 	&__label__container {
 		display: flex;
 		justify-content: space-between;
@@ -89,6 +86,7 @@ export default {
 			family: $sans-serif;
 			size: .8rem;
 		}
+
 		label {
 	  	color: palette(black);
 		  font-weight: 600;
@@ -99,47 +97,50 @@ export default {
 		  font-weight: 500;
 	  }
 	}
+
 	&__input__container {
-		display: flex;
 	  border: {
 	    width: 1px;
 	    style: solid;
 	    color: palette(gray, border);
 	    radius: $border-radius;
 	  }
+		display: flex;
 	  padding: {
 	  	top: 4px;
 	  	left: 6px;
 	  	right: 4px;
 	  	bottom: 4px;
 	  }
+
 		input {
-			flex: 1;
 		  border: 0;
-		  padding: 0;
-		  color: palette(black);
 		  background-color: transparent;
+		  color: palette(black);
+			flex: 1;
 		  font: {
 		    family: $sans-serif;
 		    size: .9rem;
 		  }
+		  margin-right: .25rem;
 		  outline: 0;
+		  padding: 0;
+
 		  &::placeholder {
 		    color: palette(gray);  
 		  }
-		  margin-right: .25rem;
 		}
 
 		button {
-			cursor: pointer;
-			color: palette(white);
+		  background-color: palette(purple);
 			border: {
 	    	width: 1px;
 	    	style: solid;
 	    	color: palette(purple, dark);
 	    	radius: $border-radius;
 	  	}
-		  background-color: palette(purple);
+	  	color: palette(white);
+			cursor: pointer;
 		  font: {
 		    family: $sans-serif;
 		    size: .9rem;

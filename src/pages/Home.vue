@@ -16,7 +16,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import Search from '../components/Search.vue'
 
 export default {
@@ -41,7 +40,7 @@ export default {
 
   head: {
     title: {
-      inner: 'Search GIFs'
+      inner: 'Search all the GIFs'
     }
   }
 }
@@ -70,35 +69,39 @@ export default {
       size: 5rem;
       weight: 900;
     }
-    text-shadow: -3px 3px #FDD9FF;
     margin: {
       top: 8rem;
       bottom: 1rem;
     }
+    text-shadow: -3px 3px #FDD9FF;
 
     @media screen and (max-width: screen(medium)) {
-      margin-top: 6rem;
       font-size: 4rem;
+      margin-top: 6rem;
     }
 
     @media screen and (max-width: screen(small)) {
-      margin-top: 4rem;
       font-size: 3rem;
+      margin-top: 4rem;
     }
   }
 
   .search {
-    height: 60px;
-    width: 100%;
     background: {
       size: 2rem;
       position: 98% center;
     }
     box-shadow: 0 4px 6px RGBA(0, 0, 0, 0.35); 
+    height: 60px;
+    width: 100%;
 
     &__input {
       font-size: 1.25rem;
       padding-left: 1rem;
+
+      @media screen and (max-width: screen(small)) {
+        padding-left: .65rem;
+      }
     }
 
     @media screen and (max-width: screen(medium)) {

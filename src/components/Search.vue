@@ -68,7 +68,7 @@ export default {
   cursor: text;
   background: {
     color: palette(gray, x-light);
-    image: url("../assets/images/search.svg");
+    image: url("../assets/icons/search.svg");
     size: 1.65rem;
     position: 99% center;
     repeat: no-repeat;

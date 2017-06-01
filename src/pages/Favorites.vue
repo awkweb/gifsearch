@@ -11,17 +11,12 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
 import Navbar from '../components/Navbar.vue'
-import MasonryGrid from '../components/MasonryGrid.vue'
+import MasonryGrid from '../components/MasonryGrid/MasonryGrid.vue'
 
 export default {
   name: 'home',
-
-  data: () => ({
-    loading: false,
-    error: null
-  }),
 
   components: {
     Navbar,
@@ -42,7 +37,7 @@ export default {
 
   head: {
     title: {
-      inner: 'Results'
+      inner: 'Favorites'
     }
   }
 }

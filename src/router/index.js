@@ -5,10 +5,10 @@ import VueRouter from 'vue-router'
 import Home from '../pages/Home.vue'
 import Favorites from '../pages/Favorites.vue'
 import SearchResults from '../pages/SearchResults.vue'
-import Details from '../pages/Details.vue'
+import GifDetails from '../pages/GifDetails.vue'
 import NotFound from '../pages/NotFound.vue'
 
-Vue.use(VueHead)
+Vue.use(VueHead, { separator: '-' , complement: 'Gifsearch' })
 Vue.use(VueRouter)
 
 const router = new VueRouter({
@@ -27,7 +27,7 @@ const router = new VueRouter({
 		{
 			path: '/favorites/:gifId/',
 			name: 'favorite-details',
-			component: Details
+			component: GifDetails
 		},
 		{
 			path: '/g/:searchTerm/',
@@ -37,7 +37,7 @@ const router = new VueRouter({
 		{
 			path: '/g/:searchTerm/:gifId/',
 			name: 'details',
-			component: Details
+			component: GifDetails
 		},
 		{
 			path: '*',

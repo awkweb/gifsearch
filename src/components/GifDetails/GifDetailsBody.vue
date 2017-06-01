@@ -3,7 +3,7 @@
     <div class="details__toolbar">
       <div>
         <button
-          @click="onFavorite"
+          @click="onFavorite($event)"
           :class="isFavorited ? 'hearted' : 'heart'"
           class="details__button">
         </button>
@@ -26,19 +26,14 @@
     <div class="details__section">
       <h2>Links</h2>
       <field
-        :label="'Giphy'"
-        :helpText="'Link to the GIF image on Giphy'"
+        v-for="field in fields"
+        :key="field.label"
+        :label="field.label"
+        :helpText="field.helpText"
         :url="activeGif.url"
-        :buttonText="'Copy'"
-        :activeButtonText="'Copied'"></field>
-
-      <field
-        :label="'Embed'"
-        :helpText="'GIF Embed Code'"
-        :url="activeGif.url"
-        :buttonText="'Copy'"
-        :activeButtonText="'Copied'"
-        :type="'embed'"></field>
+        :buttonText="field.buttonText"
+        :activeButtonText="field.activeButtonText"
+        :type="field.type"></field>
     </div>
 
     <div class="details__section" v-show="relatedGifs.length == 3">
@@ -55,12 +50,31 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
 import Field from '../Field.vue'
 import RelatedGif from './RelatedGif.vue'
 
 export default {
 	name: 'gif-details-body',
+
+  data: () => ({
+    fields: [
+      {
+        'label': 'Giphy',
+        'helpText': 'Link to the GIF image on Giphy',
+        'label': 'Giphy',
+        'buttonText': 'Copy',
+        'activeButtonText': 'Copied'
+      },
+      {
+        'label': 'Embed',
+        'helpText': 'GIF Embed Code',
+        'buttonText': 'Copy',
+        'activeButtonText': 'Copied',
+        'type': 'embed'
+      }
+    ]
+  }),
 
 	components: {
     Field,
@@ -68,14 +82,13 @@ export default {
   },
 
   props: [
+    'gifs',
     'isFavorited',
     'isFavoriteDetails'
   ],
 
   computed: {
     ...mapGetters('giphy', [
-      'searchResults',
-      'favorites',
       'activeGif'
     ]),
 
@@ -89,9 +102,8 @@ export default {
     },
 
     relatedGifs () {
-      const gifs = this.isFavoriteDetails ? this.favorites : this.searchResults
       let related = []
-      gifs.some((gif, index) => {
+      this.gifs.some((gif, index) => {
         if (gif.id != this.activeGif.id) {
           related.push(gif)
         }
@@ -102,8 +114,8 @@ export default {
   },
 
   methods: {
-  	onFavorite () {
-      this.$emit('onFavorite')
+  	onFavorite (event) {
+      this.$emit('onFavorite', event)
     },
 
     onExternalLink () {
@@ -162,15 +174,15 @@ export default {
     transition: color $transition, background-color $transition;
     
     &.heart {
-      background-image: url("../../assets/images/heart-black.svg");
+      background-image: url("../../assets/icons/heart-black.svg");
     }
 
     &.hearted {
-      background-image: url("../../assets/images/heart.svg");
+      background-image: url("../../assets/icons/heart.svg");
     }
 
     &.external-link {
-      background-image: url("../../assets/images/external-link.svg");
+      background-image: url("../../assets/icons/external-link.svg");
     }
 
     &:focus {

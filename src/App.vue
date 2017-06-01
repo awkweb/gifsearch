@@ -31,13 +31,24 @@ body {
 }
 
 #app {
+  color: palette(black);
   font: {
     family: $sans-serif;
     size: 20px;
   }
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: palette(black);
   min-height: 100vh;
+  text-rendering: optimizeLegibility;
+}
+
+.fireworks {
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: 20;
 }
 </style>

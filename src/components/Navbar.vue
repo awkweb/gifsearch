@@ -133,16 +133,21 @@ export default {
 
   &__logo {
     color: palette(purple);
-    text-decoration: none;
     font: {
       family: $sans-serif;
       size: 1.5rem;
       weight: 900;
     }
-    text-shadow: -2px 2px #FDD9FF;
-    transition: color $transition;
-    outline: 0;
     margin-right: 1rem;
+    outline: 0;
+    text-decoration: none;
+    text-shadow: -2px 2px #FDD9FF;
+    transition: color $transition, text-shadow $transition;
+
+    &:hover {
+      color: palette(blue, x-dark);
+      text-shadow: -2px 2px palette(blue, light); 
+    }
   }
 
   &__link {
@@ -173,7 +178,7 @@ export default {
         width: 34px;
         background: {
           color: palette(red);
-          image: url("../assets/images/hearted.svg");
+          image: url("../assets/icons/hearted.svg");
           position: center center;
           size: 30px;
           repeat: no-repeat;
@@ -205,7 +210,7 @@ export default {
       width: 36px;
       background: {
         color: palette(blue);
-        image: url("../assets/images/search-2.svg");
+        image: url("../assets/icons/search-white.svg");
         position: center center;
         size: 30px;
         repeat: no-repeat;

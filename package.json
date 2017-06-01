@@ -9,6 +9,7 @@
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
+    "animejs": "^2.0.2",
     "axios": "^0.16.1",
     "clipboard": "^1.7.1",
     "local-storage": "^1.4.2",

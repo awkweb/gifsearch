@@ -30,6 +30,8 @@
         <router-link :to="{ name: 'search-results', params: { searchTerm: 'gladiator' }}">gladiator</router-link>.
       </div>
     </div>
+
+    <canvas class="fireworks"></canvas>
   </div>
 </template>
 
@@ -64,8 +66,9 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../scss/_variables.scss';
-@import '../scss/_functions.scss';
+@import '../../scss/_variables.scss';
+@import '../../scss/_functions.scss';
+
 .masonry-grid {
   min-height: calc(100vh - 76px);
   padding: {
@@ -76,11 +79,7 @@ export default {
 
   &__container {
     columns: 15rem;
-    -moz-columns: 15rem;
-    -webkit-columns: 15rem;
     column-gap: .5rem;
-    -moz-column-gap: .5rem;
-    -webkit-column-gap: .5rem;
   }
 
   &__empty {
