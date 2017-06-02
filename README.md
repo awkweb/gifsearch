@@ -35,6 +35,7 @@ $ which npm  # verify that npm was installed
 Now we install the dependencies from the `package.json`:
 
 ```bash
+$ git clone https://github.com/tmm/gifsearch.git
 $ cd gifsearch
 $ npm install
 ```
@@ -108,7 +109,7 @@ GIF detail view allows users to browse by tags, copy links, view related GIFs, e
 
 ![detail view](screenshots/03.png)
 
-Empty state messages encourages action.
+Empty state messages encourage action.
 
 ![empty state](screenshots/04.png)
 
