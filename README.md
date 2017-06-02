@@ -12,7 +12,7 @@ Complete in order.
 
 Gifsearch uses a tiny number of third-party libraries (not including Vue.js core).
 
-```json
+```
 "dependencies": {
   "animejs": "^2.0.2",  # for the heart animations
   "axios": "^0.16.1",  # HTTP client
