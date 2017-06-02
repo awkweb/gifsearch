@@ -6,7 +6,7 @@
     @mouseleave="showFavorite = false">
 
     <button
-      v-if="showFavorite"
+      v-if="isFavorited || showFavorite"
       class="masonry-grid-cell__favorite"
       :class="isFavorited ? 'hearted' : 'heart'"
       @click="onFavorite($event)">

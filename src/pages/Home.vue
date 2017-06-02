@@ -10,8 +10,21 @@
       v-model="searchTerm"
       :searchTerm="searchTerm"
       :focusSearch="true"
-      @onSearch="onSearch">
+      @onSearch="onSearch"
+      @onFocus="onFocus"
+      @onBlur="onBlur">
     </search>
+
+    <transition name="fade">
+      <div v-show="searchActive" class="home__trending">
+        <h2>Trending</h2>
+        <ul>
+          <li><router-link :to="{ name: 'search-results', params: { searchTerm: 'nycgifathon' }}">nycgifathon</router-link></li>
+          <li><router-link :to="{ name: 'search-results', params: { searchTerm: 'pusheen' }}">pusheen</router-link></li>
+          <li><router-link :to="{ name: 'search-results', params: { searchTerm: 'game+of+thrones' }}">game of thrones</router-link></li>
+        </ul>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -22,7 +35,8 @@ export default {
   name: 'home',
 
   data: () => ({
-    searchTerm: ''
+    searchTerm: '',
+    searchActive: false
   }),
 
   components: {
@@ -35,6 +49,14 @@ export default {
         const searchTerm = this.searchTerm.replace(/\s/g, '+')
         this.$router.push({ name: 'search-results', params: { searchTerm: searchTerm }})
       }
+    },
+
+    onFocus () {
+      this.searchActive = true
+    },
+
+    onBlur () {
+      this.searchActive = false
     }
   },
 
@@ -93,6 +115,7 @@ export default {
     }
     box-shadow: 0 4px 6px RGBA(0, 0, 0, 0.35); 
     height: 60px;
+    margin-bottom: 4rem;
     width: 100%;
 
     &__input {
@@ -106,15 +129,69 @@ export default {
 
     @media screen and (max-width: screen(medium)) {
       height: 55px;      
+
       &__input { font-size: 1.1rem; }
     }
 
     @media screen and (max-width: screen(small)) {
-      height: 45px;
       background-size: 1.8rem;
       box-shadow: 0 2px 4px RGBA(0, 0, 0, 0.35); 
+      height: 45px;
+      margin-bottom: 1rem;
+
       &__input { font-size: 1.025rem; }
     }
   }
+
+  &__trending {
+    align-items: center;
+    display: flex;
+
+    @media screen and (max-width: screen(small)) {
+      flex-direction: column;
+    }
+
+    h2 {
+      color: palette(gray, dark);
+
+      @media screen and (max-width: screen(small)) {
+        font-size: 1.5rem;
+        margin-bottom: .5rem;
+      }
+    }
+
+    ul {
+      margin: 0;
+      list-style-type: none;
+
+      @media screen and (max-width: screen(small)) {
+        padding-left: 0;
+
+        li {
+          font-size: 1.1rem;
+          text-align: center;
+        }
+      }
+
+      a {
+        color: palette(gray, dark);
+        text-decoration-color: palette(gray, light);
+        white-space: nowrap;
+        transition: color $transition;
+
+        &:hover {
+          color: palette(purple);     
+        }
+      }
+    }
+  }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 1.5s;
+}
+
+.fade-enter, .fade-leave-to, .fade-leave-active {
+  opacity: 0;
 }
 </style>

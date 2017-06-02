@@ -7,6 +7,13 @@
 
     <spinner v-if="loading"></spinner>
 
+    <div
+      v-if="error"
+      class="details__empty">
+      Error fetching GIF details.
+      <div>Try again later :(</div>
+    </div>
+
     <gif-details-nav
       v-if="!loading && activeGif"
       :searchTerm="searchTerm"
@@ -83,14 +90,6 @@ export default {
   },
 
   mounted: function () {
-    let hiResImg = new Image()
-    hiResImg.onload = () => {
-      this.currentSrc = this.activeGif.images.original.url
-    }
-    hiResImg.src = this.activeGif.images.original.url
-  },
-
-  created () {
     this.getDetails()
   },
 
@@ -156,7 +155,16 @@ export default {
 
     getResult (gifId, isFavoriteDetails) {
       const activeGif = this.gifs.find(gif => gif.id === gifId)
-      this.SET_ACTIVE_GIF(activeGif)
+      if (activeGif) {
+        this.SET_ACTIVE_GIF(activeGif)
+        let hiResImg = new Image()
+        hiResImg.onload = () => {
+          this.currentSrc = this.activeGif.images.original.url
+        }
+        hiResImg.src = this.activeGif.images.original.url
+      } else {
+        this.error = 'No gif'
+      }
     },
 
     onFavorite (event) {
@@ -268,6 +276,34 @@ export default {
 
     @media screen and (max-width: screen(small)) {
       max-width: 100%;
+    }
+  }
+
+  &__empty {
+    margin-top: 4rem;
+    text-align: center;
+    color: palette(black);
+    font: {
+      family: $sans-serif;
+      size: 1.35rem;
+      weight: 600;
+    }
+
+    @media screen and (max-width: screen(small)) {
+      margin-top: 2rem;
+    }
+
+    div {
+      font: {
+        family: $sans-serif;
+        size: 1.15rem;
+        weight: 500;
+      }
+    }
+
+    a {
+      color: palette(gray);
+      text-decoration-color: palette(gray);
     }
   }
 }

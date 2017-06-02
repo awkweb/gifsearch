@@ -16,7 +16,7 @@ export default {
 	methods: {
 		getStyle () {
 			return {
-				backgroundImage: `url(${this.gif.images.fixed_height.url})`
+				backgroundImage: `url(${this.gif.images.fixed_height_downsampled.url})`
 			}
 		},
 

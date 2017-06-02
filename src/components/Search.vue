@@ -10,8 +10,8 @@
       :autofocus="focusSearch"
       @input="onInput($event.target.value)"
       @keyup.enter="onSearch"
-      @focus="isActive = true"
-      @blur="isActive = false"
+      @focus="onFocus"
+      @blur="onBlur"
       placeholder="Search for sushi, soccer, spaceships, etc."
       class="search__input"
       spellcheck="false"
@@ -38,6 +38,16 @@ export default {
     ...mapMutations([
       'SET_QUERY'
     ]),
+
+    onFocus () {
+      this.isActive = true
+      this.$emit('onFocus')
+    },
+
+    onBlur () {
+      this.isActive = false
+      this.$emit('onBlur')
+    },
 
     onClick () {
       const input = this.$el.children[0]
