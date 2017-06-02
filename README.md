@@ -1,4 +1,6 @@
-# Gifsearch
+![logo](screenshots/logo.png)
+
+---
 
 A GIF search web app powered by the [Giphy API](https://github.com/Giphy/GiphyAPI) and [Vue.js](http://vuejs.org/).
 
@@ -98,7 +100,7 @@ Masonry grid layout is familar to user and easy to browse.
 
 ![masonry](screenshots/02.png)
 
-Favorite animation provides a small details that delights users.
+Favorite animation provides a small detail that delights users.
 
 ![favorite gif](screenshots/fav.gif)
 
@@ -128,4 +130,4 @@ These are the main tools. You can check out the `package.json` for specific libr
 
 ### Other
 
-If a user searched for `favorites`, then the proposed routes for the search (`/:search_term`) and detail (`/:search_term/:gif_id/`) views collided with the favorites (`/favorites`) view. To solve this problem a `/g/` was added before the `/:search_term/`. See `src/router/index.js` for more info.
+If a user searched for `favorites`, then the proposed routes for the search (`/:search_term`) and detail (`/:search_term/:gif_id/`) views collided with the favorites (`/favorites`) view. To solve this problem a `/g/` was added before the `/:search_term/` (i.e. `gifsearch.com/g/:search_term/:gif_id`). See `src/router/index.js` for more info.
