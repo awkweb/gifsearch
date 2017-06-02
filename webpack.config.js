@@ -1,13 +1,12 @@
 const path = require('path')
 const webpack = require('webpack')
-const ExtractTextPlugin = require("extract-text-webpack-plugin")
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
   entry: './src/app.js',
   output: {
     path: path.resolve(__dirname, './dist'),
-    publicPath: '/dist/',
+    publicPath: '/',
     filename: 'build.js'
   },
   module: {
@@ -16,7 +15,6 @@ module.exports = {
         test: /\.vue$/,
         loader: 'vue-loader',
         options: {
-          extractCSS: true,
           loaders: {
             'scss': 'vue-style-loader!css-loader!sass-loader',
             'sass': 'vue-style-loader!css-loader!sass-loader?indentedSyntax'
@@ -27,10 +25,6 @@ module.exports = {
         test: /\.js$/,
         loader: 'babel-loader',
         exclude: /node_modules/
-      },
-      {
-        test: /\.scss$/,
-        loader: process.env.NODE_ENV !== 'production' ? 'style-loader!css-loader!sass-loader' : ExtractTextPlugin.extract('css-loader!sass-loader')
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
@@ -54,15 +48,11 @@ module.exports = {
   performance: {
     hints: false
   },
-  plugins: [
-    new ExtractTextPlugin({filename: 'styles.css', disable: process.env.NODE_ENV !== 'production'})
-  ],
   devtool: '#eval-source-map'
 }
 
 if (process.env.NODE_ENV === 'production') {
   module.exports.devtool = '#source-map'
-  // http://vue-loader.vuejs.org/en/workflow/production.html
   module.exports.plugins = (module.exports.plugins || []).concat([
     new webpack.DefinePlugin({
       'process.env': {

@@ -1,12 +1,13 @@
 {
-  "name": "kit",
-  "description": "kit.com project",
+  "name": "gifsearch",
+  "description": "coding project with the giphy api",
   "version": "1.0.0",
   "author": "Tom Meagher <thom.meagher@gmail.com>",
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
-    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
+    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
+    "start": "cross-env NODE_ENV=production webpack-dev-server --open"
   },
   "dependencies": {
     "animejs": "^2.0.2",
@@ -32,6 +33,7 @@
     "node-sass": "^4.5.0",
     "sass-loader": "^5.0.1",
     "vue-loader": "^12.1.0",
+    "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.3.3",
     "webpack": "^2.6.1",
     "webpack-dev-server": "^2.4.5"
